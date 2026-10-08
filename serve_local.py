@@ -106,11 +106,12 @@ class Handler(SimpleHTTPRequestHandler):
 
 if __name__ == '__main__':
     args = argparse.ArgumentParser()
+    args.add_argument('--host', type=str, default='127.0.0.1', help='host address to bind to (default: 127.0.0.1)')
     args.add_argument('--port', type=int, default=8000)
     args.add_argument('--open', action='store_true', help='open the default browser after binding')
     options = args.parse_args()
-    server = ThreadingHTTPServer(('127.0.0.1', options.port), Handler)
-    address = 'http://localhost:%d/' % server.server_port
+    server = ThreadingHTTPServer((options.host, options.port), Handler)
+    address = 'http://%s:%d/' % ('localhost' if options.host in ('127.0.0.1', '0.0.0.0') else options.host, server.server_port)
     print('Local mirror: %s (Ctrl+C to stop)' % address, flush=True)
     if options.open:
         webbrowser.open(address)
